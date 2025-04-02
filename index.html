@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Capture</title>
+</head>
 
 <body>
-    <h1>Index</h1>
-    <p>123</p>
-    <a href="about.html">About</a>
+    <h2>Camera Capture</h2>
+    <video id="video" autoplay></video>
+    <button id="capture">Capture</button>
+    <canvas id="canvas"></canvas>
+    <a id="download" style="display: none">Download Image</a>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const downloadLink = document.getElementById('download');
+
+        // 1. Access the camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => console.error("Error accessing camera: ", err));
+
+        // 2. Capture image when button is clicked
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 3. Convert canvas to image and enable download
+            downloadLink.href = canvas.toDataURL('image/png');
+            downloadLink.download = 'captured-image.png';
+            downloadLink.style.display = 'block';
+            downloadLink.textContent = 'Download Image';
+        });
+    </script>
 </body>
 
 </html>
